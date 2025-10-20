@@ -17,51 +17,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class REST {
 
-	/**
-	 * Request timeout in seconds
-	 */
 	const TIMEOUT = 15;
 
-	/**
-	 * Maximum retry attempts
-	 */
 	const MAX_RETRIES = 3;
 
-	/**
-	 * Constructor
-	 */
 	public function __construct() {
-		// Hook for any initialization if needed
 	}
 
-	/**
-	 * Get MPs from API
-	 *
-	 * @param int $page     Page number.
-	 * @param int $per_page Items per page.
-	 * @return array|WP_Error
-	 */
 	public function get_mps( $page = 1, $per_page = 100 ) {
 		$base_url = Settings::get( 'api_base_url', '' );
 		
 		if ( empty( $base_url ) ) {
-			return new \WP_Error( 'no_api_url', __( 'API Base URL is not configured.', 'mp-directory' ) );
+			return new \WP_Error( 'no_api_url', __( 'Bazowy URL API nie jest skonfigurowany.', 'mp-directory' ) );
 		}
 
 		return $this->request( $base_url );
 	}
 
-	/**
-	 * Get all MPs (handles pagination automatically)
-	 *
-	 * @param int $limit Maximum number of MPs to fetch (0 = no limit).
-	 * @return array|WP_Error
-	 */
 	public function get_all_mps( $limit = 0 ) {
 		$base_url = Settings::get( 'api_base_url', '' );
 		
 		if ( empty( $base_url ) ) {
-			return new \WP_Error( 'no_api_url', __( 'API Base URL is not configured.', 'mp-directory' ) );
+			return new \WP_Error( 'no_api_url', __( 'Bazowy URL API nie jest skonfigurowany.', 'mp-directory' ) );
 		}
 
 		$all_mps = array();
@@ -75,7 +52,6 @@ class REST {
 				return $response;
 			}
 
-			// Handle different response structures
 			$mps = array();
 			if ( isset( $response['data'] ) && is_array( $response['data'] ) ) {
 				$mps = $response['data'];
@@ -114,18 +90,9 @@ class REST {
 		return $all_mps;
 	}
 
-	/**
-	 * Make HTTP request with retry logic
-	 *
-	 * @param string $url     Request URL.
-	 * @param array  $args    Request arguments.
-	 * @param int    $attempt Current attempt number.
-	 * @return array|WP_Error
-	 */
 	private function request( $url, $args = array(), $attempt = 1 ) {
 		$api_key = Settings::get( 'api_key', '' );
 
-		// Build request arguments
 		$default_args = array(
 			'timeout' => self::TIMEOUT,
 			'headers' => array(
@@ -133,20 +100,16 @@ class REST {
 			),
 		);
 
-		// Add API key if configured
 		if ( ! empty( $api_key ) ) {
 			$default_args['headers']['Authorization'] = 'Bearer ' . $api_key;
 		}
 
 		$args = wp_parse_args( $args, $default_args );
 
-		// Make the request
 		$response = wp_remote_get( $url, $args );
 
-		// Check for errors
 		if ( is_wp_error( $response ) ) {
 			if ( $attempt < self::MAX_RETRIES ) {
-				// Exponential backoff
 				sleep( pow( 2, $attempt - 1 ) );
 				return $this->request( $url, $args, $attempt + 1 );
 			}
@@ -155,20 +118,16 @@ class REST {
 
 		$status_code = wp_remote_retrieve_response_code( $response );
 		
-		// Handle rate limiting and server errors with retry
 		if ( in_array( $status_code, array( 429, 500, 502, 503, 504 ), true ) && $attempt < self::MAX_RETRIES ) {
-			// Exponential backoff
 			sleep( pow( 2, $attempt ) );
 			return $this->request( $url, $args, $attempt + 1 );
 		}
 
-		// Handle non-200 responses
 		if ( $status_code < 200 || $status_code >= 300 ) {
 			return new \WP_Error(
 				'http_error',
 				sprintf(
-					/* translators: %d: HTTP status code */
-					__( 'API request failed with status code %d', 'mp-directory' ),
+					__( 'Żądanie API nie powiodło się z kodem statusu %d', 'mp-directory' ),
 					$status_code
 				)
 			);
@@ -183,7 +142,7 @@ class REST {
 				'json_error',
 				sprintf(
 					/* translators: %s: JSON error message */
-					__( 'Failed to parse JSON response: %s', 'mp-directory' ),
+					__( 'Nie udało się przeanalizować odpowiedzi JSON: %s', 'mp-directory' ),
 					json_last_error_msg()
 				)
 			);
@@ -192,11 +151,6 @@ class REST {
 		return $data;
 	}
 
-	/**
-	 * Test API connection
-	 *
-	 * @return array Array with 'success' (bool) and 'message' (string).
-	 */
 	public function test_connection() {
 		$response = $this->get_mps( 1, 1 );
 
@@ -209,7 +163,7 @@ class REST {
 
 		return array(
 			'success' => true,
-			'message' => __( 'API connection successful!', 'mp-directory' ),
+			'message' => __( 'Połączenie z API pomyślne!', 'mp-directory' ),
 		);
 	}
 }

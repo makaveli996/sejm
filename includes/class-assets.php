@@ -17,19 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Assets {
 
-	/**
-	 * Constructor
-	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 	}
 
-	/**
-	 * Enqueue frontend styles and scripts
-	 */
 	public function enqueue_frontend_assets() {
-		// Only load on MP pages
 		if ( is_post_type_archive( 'mp' ) || is_singular( 'mp' ) ) {
 			wp_enqueue_style(
 				'mp-directory-frontend',
@@ -48,13 +41,7 @@ class Assets {
 		}
 	}
 
-	/**
-	 * Enqueue admin styles and scripts
-	 *
-	 * @param string $hook The current admin page hook.
-	 */
 	public function enqueue_admin_assets( $hook ) {
-		// Only load on MP Directory admin pages
 		if ( strpos( $hook, 'mp-directory' ) === false ) {
 			return;
 		}
@@ -74,7 +61,6 @@ class Assets {
 			true
 		);
 
-		// Localize script for AJAX
 		wp_localize_script(
 			'mp-directory-admin',
 			'mpDirectoryAdmin',
@@ -82,12 +68,12 @@ class Assets {
 				'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
 				'nonce'        => wp_create_nonce( 'mp_directory_admin' ),
 				'i18n'         => array(
-					'importing'        => __( 'Importing...', 'mp-directory' ),
-					'importComplete'   => __( 'Import completed successfully!', 'mp-directory' ),
-					'importError'      => __( 'Import failed. Please try again.', 'mp-directory' ),
-					'confirmImport'    => __( 'Are you sure you want to start the import? This may take several minutes.', 'mp-directory' ),
-					'previewLoading'   => __( 'Loading preview...', 'mp-directory' ),
-					'previewError'     => __( 'Failed to load preview.', 'mp-directory' ),
+					'importing'        => __( 'Importowanie...', 'mp-directory' ),
+					'importComplete'   => __( 'Import zakończony pomyślnie!', 'mp-directory' ),
+					'importError'      => __( 'Import nie powiódł się. Spróbuj ponownie.', 'mp-directory' ),
+					'confirmImport'    => __( 'Czy na pewno chcesz rozpocząć import? Może to potrwać kilka minut.', 'mp-directory' ),
+					'previewLoading'   => __( 'Ładowanie podglądu...', 'mp-directory' ),
+					'previewError'     => __( 'Nie udało się załadować podglądu.', 'mp-directory' ),
 				),
 			)
 		);

@@ -19,35 +19,35 @@ $meta_items = array();
 
 if ( $first_name ) {
 	$meta_items[] = array(
-		'label' => __( 'First Name', 'mp-directory' ),
+		'label' => __( 'Imię', 'mp-directory' ),
 		'value' => $first_name,
 	);
 }
 
 if ( $last_name ) {
 	$meta_items[] = array(
-		'label' => __( 'Last Name', 'mp-directory' ),
+		'label' => __( 'Nazwisko', 'mp-directory' ),
 		'value' => $last_name,
 	);
 }
 
 if ( $party ) {
 	$meta_items[] = array(
-		'label' => __( 'Party', 'mp-directory' ),
+		'label' => __( 'Partia', 'mp-directory' ),
 		'value' => $party,
 	);
 }
 
 if ( $constituency ) {
 	$meta_items[] = array(
-		'label' => __( 'Constituency', 'mp-directory' ),
+		'label' => __( 'Okręg wyborczy', 'mp-directory' ),
 		'value' => $constituency,
 	);
 }
 
 if ( $term ) {
 	$meta_items[] = array(
-		'label' => __( 'Term', 'mp-directory' ),
+		'label' => __( 'Kadencja', 'mp-directory' ),
 		'value' => $term,
 	);
 }
@@ -55,14 +55,14 @@ if ( $term ) {
 if ( $birthdate ) {
 	$formatted_date = date_i18n( get_option( 'date_format' ), strtotime( $birthdate ) );
 	$meta_items[] = array(
-		'label' => __( 'Date of Birth', 'mp-directory' ),
+		'label' => __( 'Data urodzenia', 'mp-directory' ),
 		'value' => $formatted_date,
 	);
 }
 
 if ( $education ) {
 	$meta_items[] = array(
-		'label' => __( 'Education', 'mp-directory' ),
+		'label' => __( 'Wykształcenie', 'mp-directory' ),
 		'value' => $education,
 	);
 }
@@ -70,7 +70,7 @@ if ( $education ) {
 if ( ! empty( $meta_items ) ) :
 	?>
 	<section class="mp-section mp-meta">
-		<h2><?php esc_html_e( 'Details', 'mp-directory' ); ?></h2>
+		<h2><?php esc_html_e( 'Szczegóły', 'mp-directory' ); ?></h2>
 		<table class="mp-meta-table">
 			<tbody>
 				<?php foreach ( $meta_items as $item ) : ?>

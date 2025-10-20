@@ -12,26 +12,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <div class="wrap">
-	<h1><?php esc_html_e( 'Import Members of Parliament', 'mp-directory' ); ?></h1>
+	<h1><?php esc_html_e( 'Importuj posłów', 'mp-directory' ); ?></h1>
 
 	<div class="mp-directory-import-wrapper">
 		<div class="notice notice-info">
 			<p>
-				<?php esc_html_e( 'This tool will fetch MP data from the configured API and import them into WordPress.', 'mp-directory' ); ?>
+				<?php esc_html_e( 'To narzędzie pobierze dane posłów ze skonfigurowanego API i zaimportuje je do WordPressa.', 'mp-directory' ); ?>
 				<br>
-				<?php esc_html_e( 'Preview the data first to ensure your API connection is working correctly.', 'mp-directory' ); ?>
+				<?php esc_html_e( 'Najpierw sprawdź podgląd danych, aby upewnić się, że połączenie z API działa poprawnie.', 'mp-directory' ); ?>
 			</p>
 		</div>
 
 		<!-- Step 1: Preview -->
 		<div id="mp-import-step-preview">
-			<h2><?php esc_html_e( 'Step 1: Preview Data', 'mp-directory' ); ?></h2>
+			<h2><?php esc_html_e( 'Krok 1: Podgląd danych', 'mp-directory' ); ?></h2>
 			<p>
 				<button type="button" id="mp-directory-load-preview" class="button button-primary">
-					<?php esc_html_e( 'Load Preview', 'mp-directory' ); ?>
+					<?php esc_html_e( 'Załaduj podgląd', 'mp-directory' ); ?>
 				</button>
 				<button type="button" id="mp-directory-refresh-preview" class="button" style="display:none;">
-					<?php esc_html_e( 'Refresh Preview', 'mp-directory' ); ?>
+					<?php esc_html_e( 'Odśwież podgląd', 'mp-directory' ); ?>
 				</button>
 				<span id="mp-preview-status" class="description"></span>
 			</p>
@@ -43,10 +43,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<thead>
 							<tr>
 								<th><?php esc_html_e( 'ID', 'mp-directory' ); ?></th>
-								<th><?php esc_html_e( 'Name', 'mp-directory' ); ?></th>
-								<th><?php esc_html_e( 'Party', 'mp-directory' ); ?></th>
-								<th><?php esc_html_e( 'Constituency', 'mp-directory' ); ?></th>
-								<th><?php esc_html_e( 'Birth Date', 'mp-directory' ); ?></th>
+								<th><?php esc_html_e( 'Imię i nazwisko', 'mp-directory' ); ?></th>
+								<th><?php esc_html_e( 'Partia', 'mp-directory' ); ?></th>
+								<th><?php esc_html_e( 'Okręg wyborczy', 'mp-directory' ); ?></th>
+								<th><?php esc_html_e( 'Data urodzenia', 'mp-directory' ); ?></th>
 							</tr>
 						</thead>
 						<tbody id="mp-preview-body">
@@ -59,17 +59,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- Step 2: Import -->
 		<div id="mp-import-step-run" style="display:none;">
 			<hr>
-			<h2><?php esc_html_e( 'Step 2: Run Import', 'mp-directory' ); ?></h2>
+			<h2><?php esc_html_e( 'Krok 2: Uruchom import', 'mp-directory' ); ?></h2>
 			<p>
 				<button type="button" id="mp-directory-start-import" class="button button-primary button-hero">
-					<?php esc_html_e( 'Start Import', 'mp-directory' ); ?>
+					<?php esc_html_e( 'Rozpocznij import', 'mp-directory' ); ?>
 				</button>
 			</p>
 
 			<div id="mp-import-progress" style="display:none;">
-				<div class="mp-progress-bar">
-					<div id="mp-progress-bar-fill"></div>
-				</div>
 				<p id="mp-progress-text"></p>
 				<div id="mp-import-results"></div>
 			</div>
@@ -96,25 +93,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	background: #f0f0f1;
 	border-left: 4px solid #2271b1;
 	margin-bottom: 15px;
-}
-.mp-progress-bar {
-	width: 100%;
-	height: 30px;
-	background: #f0f0f1;
-	border-radius: 4px;
-	overflow: hidden;
-	margin: 20px 0;
-}
-#mp-progress-bar-fill {
-	height: 100%;
-	background: linear-gradient(90deg, #2271b1, #135e96);
-	width: 0%;
-	transition: width 0.3s ease;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: white;
-	font-weight: bold;
 }
 #mp-progress-text {
 	font-size: 14px;
@@ -143,6 +121,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 jQuery(document).ready(function($) {
 	var importing = false;
 	var currentOffset = 0;
+	var totalImported = 0;
+	var totalUpdated = 0;
+	var totalProcessed = 0;
 
 	// Load Preview
 	$('#mp-directory-load-preview, #mp-directory-refresh-preview').on('click', function() {
@@ -171,7 +152,7 @@ jQuery(document).ready(function($) {
 				if (response.success && response.data.items) {
 					displayPreview(response.data);
 					$status.removeClass('status-loading status-error').addClass('status-success')
-						.text('✓ <?php esc_html_e( 'Preview loaded', 'mp-directory' ); ?>');
+						.text('✓ <?php esc_html_e( 'Podgląd załadowany', 'mp-directory' ); ?>');
 					
 					$('#mp-directory-refresh-preview').show();
 					$('#mp-import-step-run').show();
@@ -196,9 +177,9 @@ jQuery(document).ready(function($) {
 		$body.empty();
 
 		// Display info
-		$info.html('<strong><?php esc_html_e( 'Preview:', 'mp-directory' ); ?></strong> ' + 
-			data.items.length + ' <?php esc_html_e( 'MPs found', 'mp-directory' ); ?> ' +
-			'(<?php esc_html_e( 'Fetched at:', 'mp-directory' ); ?> ' + data.fetched_at + ')');
+		$info.html('<strong><?php esc_html_e( 'Podgląd:', 'mp-directory' ); ?></strong> ' + 
+			data.items.length + ' <?php esc_html_e( 'znalezionych posłów', 'mp-directory' ); ?> ' +
+			'(<?php esc_html_e( 'Pobrano:', 'mp-directory' ); ?> ' + data.fetched_at + ')');
 
 		// Populate table
 		$.each(data.items, function(i, mp) {
@@ -227,6 +208,9 @@ jQuery(document).ready(function($) {
 
 		importing = true;
 		currentOffset = 0;
+		totalImported = 0;
+		totalUpdated = 0;
+		totalProcessed = 0;
 
 		$(this).prop('disabled', true);
 		$('#mp-import-progress').show();
@@ -250,24 +234,30 @@ jQuery(document).ready(function($) {
 				if (response.success) {
 					var data = response.data;
 					currentOffset = data.offset;
-
-					// Update progress
-					var percent = 50; // We don't know total, so show indeterminate
-					$('#mp-progress-bar-fill').css('width', percent + '%').text(percent + '%');
-					$('#mp-progress-text').text(data.message);
+					totalImported += data.imported || 0;
+					totalUpdated += data.updated || 0;
+					totalProcessed = totalImported + totalUpdated;
 
 					if (!data.complete) {
+						// Continue importing
+						$('#mp-progress-text').text(
+							mpDirectoryAdmin.i18n.importing + ' (' + totalProcessed + ' <?php esc_html_e( 'posłów przetworzonych', 'mp-directory' ); ?>...)'
+						);
+						
 						// Continue importing
 						runImportBatch();
 					} else {
 						// Import complete
 						importing = false;
-						$('#mp-progress-bar-fill').css('width', '100%').text('100%');
 						$('#mp-progress-text').html('<strong>✓ ' + mpDirectoryAdmin.i18n.importComplete + '</strong>');
 						$('#mp-directory-start-import').prop('disabled', false);
 						
+						var summaryMessage = '<?php esc_html_e( 'Zaimportowano', 'mp-directory' ); ?> ' + 
+							totalImported + ' <?php esc_html_e( 'nowych posłów, zaktualizowano', 'mp-directory' ); ?> ' + 
+							totalUpdated + ' <?php esc_html_e( 'istniejących posłów.', 'mp-directory' ); ?>';
+						
 						$('#mp-import-results').html(
-							'<div class="notice notice-success inline"><p>' + data.message + '</p></div>'
+							'<div class="notice notice-success inline"><p>' + summaryMessage + '</p></div>'
 						);
 					}
 				} else {

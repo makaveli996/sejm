@@ -50,7 +50,7 @@ $sejm_photo_full    = MP_Directory\mp_directory_get_field( 'mp_sejm_photo_url', 
 			<?php endif; ?>
 
 			<span class="mp-card-more">
-				<?php esc_html_e( 'View Profile', 'mp-directory' ); ?> &rarr;
+				<?php esc_html_e( 'Zobacz profil', 'mp-directory' ); ?> &rarr;
 			</span>
 		</div>
 	</a>

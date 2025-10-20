@@ -17,21 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Importer {
 
-	/**
-	 * Transient key for preview cache
-	 */
 	const PREVIEW_CACHE_KEY = 'mp_directory_preview_cache';
 
-	/**
-	 * REST API client
-	 *
-	 * @var REST
-	 */
 	private $rest;
 
-	/**
-	 * Constructor
-	 */
 	public function __construct() {
 		$this->rest = new REST();
 		
@@ -39,14 +28,11 @@ class Importer {
 		add_action( 'wp_ajax_mp_directory_import', array( $this, 'ajax_import' ) );
 	}
 
-	/**
-	 * AJAX handler for preview
-	 */
 	public function ajax_preview() {
 		check_ajax_referer( 'mp_directory_admin', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'mp-directory' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Niewystarczające uprawnienia.', 'mp-directory' ) ) );
 		}
 
 		$force_refresh = isset( $_POST['force_refresh'] ) && $_POST['force_refresh'] === 'true';
@@ -60,14 +46,11 @@ class Importer {
 		wp_send_json_success( $preview_data );
 	}
 
-	/**
-	 * AJAX handler for import
-	 */
 	public function ajax_import() {
 		check_ajax_referer( 'mp_directory_admin', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'mp-directory' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Niewystarczające uprawnienia.', 'mp-directory' ) ) );
 		}
 
 		$batch  = isset( $_POST['batch'] ) ? absint( $_POST['batch'] ) : 0;
@@ -82,14 +65,7 @@ class Importer {
 		wp_send_json_success( $result );
 	}
 
-	/**
-	 * Get preview data with caching
-	 *
-	 * @param bool $force_refresh Force refresh cache.
-	 * @return array|WP_Error
-	 */
 	public function get_preview_data( $force_refresh = false ) {
-		// Try to get cached data
 		if ( ! $force_refresh ) {
 			$cached = get_transient( self::PREVIEW_CACHE_KEY );
 			if ( false !== $cached ) {
@@ -113,7 +89,7 @@ class Importer {
 		}
 
 		if ( empty( $mps ) ) {
-			return new \WP_Error( 'no_data', __( 'No MP data found in API response.', 'mp-directory' ) );
+			return new \WP_Error( 'no_data', __( 'Nie znaleziono danych posłów w odpowiedzi API.', 'mp-directory' ) );
 		}
 
 		// Format for preview
@@ -123,32 +99,22 @@ class Importer {
 			'fetched_at' => current_time( 'mysql' ),
 		);
 
-		// Cache the preview
 		$cache_ttl = Settings::get( 'preview_cache_ttl', 20 ) * MINUTE_IN_SECONDS;
 		set_transient( self::PREVIEW_CACHE_KEY, $preview, $cache_ttl );
 
 		return $preview;
 	}
 
-	/**
-	 * Run import (batch processing)
-	 *
-	 * @param int $batch  Batch number.
-	 * @param int $offset Starting offset.
-	 * @return array|WP_Error
-	 */
 	public function run_import( $batch = 0, $offset = 0 ) {
 		$batch_size = Settings::get( 'import_batch_size', 100 );
 		$page       = floor( $offset / $batch_size ) + 1;
 
-		// Fetch data from API
 		$response = $this->rest->get_mps( $page, $batch_size );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
-		// Handle different response structures
 		$mps = array();
 		if ( isset( $response['data'] ) && is_array( $response['data'] ) ) {
 			$mps = $response['data'];
@@ -162,15 +128,31 @@ class Importer {
 				'updated'   => 0,
 				'offset'    => $offset,
 				'complete'  => true,
-				'message'   => __( 'No more MPs to import.', 'mp-directory' ),
+				'message'   => __( 'Nie ma więcej posłów do zaimportowania.', 'mp-directory' ),
 			);
 		}
 
-		// Import each MP
+		// Get total count from API
+		$total_mps = count( $mps );
+		
+		// Slice the batch we need based on offset
+		$batch_mps = array_slice( $mps, $offset, $batch_size );
+		
+		// If no records in this batch, we're done
+		if ( empty( $batch_mps ) ) {
+			return array(
+				'imported'  => 0,
+				'updated'   => 0,
+				'offset'    => $offset,
+				'complete'  => true,
+				'message'   => __( 'Import zakończony - wszystkie posłowie zostali przetworzeni.', 'mp-directory' ),
+			);
+		}
+
 		$imported = 0;
 		$updated  = 0;
 
-		foreach ( $mps as $mp_data ) {
+		foreach ( $batch_mps as $mp_data ) {
 			$result = $this->import_single_mp( $mp_data );
 			
 			if ( ! is_wp_error( $result ) ) {
@@ -182,8 +164,8 @@ class Importer {
 			}
 		}
 
-		$new_offset = $offset + count( $mps );
-		$has_more   = count( $mps ) >= $batch_size;
+		$new_offset = $offset + count( $batch_mps );
+		$has_more   = $new_offset < $total_mps;
 
 		return array(
 			'imported' => $imported,
@@ -191,36 +173,25 @@ class Importer {
 			'offset'   => $new_offset,
 			'complete' => ! $has_more,
 			'message'  => sprintf(
-				/* translators: 1: imported count, 2: updated count */
-				__( 'Imported %1$d new MPs, updated %2$d existing MPs.', 'mp-directory' ),
+				__( 'Zaimportowano %1$d nowych posłów, zaktualizowano %2$d istniejących posłów.', 'mp-directory' ),
 				$imported,
 				$updated
 			),
 		);
 	}
 
-	/**
-	 * Import a single MP
-	 *
-	 * @param array $data MP data from API.
-	 * @return array|WP_Error Array with 'post_id' and 'is_new', or WP_Error.
-	 */
 	public function import_single_mp( $data ) {
-		// Extract API ID
 		$api_id = isset( $data['id'] ) ? $data['id'] : null;
 		
 		if ( empty( $api_id ) ) {
-			return new \WP_Error( 'no_api_id', __( 'MP data missing required "id" field.', 'mp-directory' ) );
+			return new \WP_Error( 'no_api_id', __( 'Dane posła nie zawierają wymaganego pola "id".', 'mp-directory' ) );
 		}
 
-		// Check if MP already exists
 		$existing_post = $this->get_mp_by_api_id( $api_id );
 		$is_new        = ! $existing_post;
 
-		// Map data to post fields
 		$mapped = $this->map_api_data( $data );
 
-		// Prepare post data
 		$post_data = array(
 			'post_type'    => 'mp',
 			'post_status'  => 'publish',
@@ -240,17 +211,14 @@ class Importer {
 			return $post_id;
 		}
 
-		// Store API ID
 		update_post_meta( $post_id, '_mp_api_id', $api_id );
 
-		// Update ACF fields if available
 		if ( function_exists( 'update_field' ) ) {
 			foreach ( $mapped['acf_fields'] as $field_key => $field_value ) {
 				update_field( $field_key, $field_value, $post_id );
 			}
 		}
 
-		// Handle featured image
 		if ( ! empty( $mapped['photo_url'] ) ) {
 			$this->set_featured_image( $post_id, $mapped['photo_url'], $mapped['post_title'] );
 		}
@@ -261,12 +229,6 @@ class Importer {
 		);
 	}
 
-	/**
-	 * Get MP post by API ID
-	 *
-	 * @param mixed $api_id API ID.
-	 * @return WP_Post|null
-	 */
 	private function get_mp_by_api_id( $api_id ) {
 		$query = new \WP_Query(
 			array(
@@ -289,14 +251,7 @@ class Importer {
 		return null;
 	}
 
-	/**
-	 * Map API data to WordPress post/ACF fields
-	 *
-	 * @param array $data API data.
-	 * @return array Mapped data.
-	 */
 	private function map_api_data( $data ) {
-		// Extract common fields
 		$first_name  = isset( $data['firstName'] ) ? sanitize_text_field( $data['firstName'] ) : '';
 		$last_name   = isset( $data['lastName'] ) ? sanitize_text_field( $data['lastName'] ) : '';
 		$full_name   = isset( $data['firstLastName'] ) ? sanitize_text_field( $data['firstLastName'] ) : "$first_name $last_name";
@@ -308,14 +263,12 @@ class Importer {
 		$profession  = isset( $data['profession'] ) ? sanitize_text_field( $data['profession'] ) : '';
 		$photo_url   = isset( $data['photo'] ) ? esc_url_raw( $data['photo'] ) : '';
 		
-		// Build Sejm API photo URLs based on ID
 		$api_id = isset( $data['id'] ) ? absint( $data['id'] ) : 0;
 		$api_base_url = Settings::get( 'api_base_url', '' );
 		$sejm_photo_url = '';
 		$sejm_photo_mini_url = '';
 		
 		if ( ! empty( $api_id ) && ! empty( $api_base_url ) ) {
-			// Extract term from base URL (e.g., "term10" from "https://api.sejm.gov.pl/sejm/term10/MP")
 			if ( preg_match( '/term(\d+)/i', $api_base_url, $matches ) ) {
 				$term = $matches[1];
 				$sejm_photo_url = "https://api.sejm.gov.pl/sejm/term{$term}/MP/{$api_id}/photo";
@@ -323,26 +276,22 @@ class Importer {
 			}
 		}
 
-		// Build post content
 		$content_parts = array();
 		if ( ! empty( $profession ) ) {
-			$content_parts[] = '<p><strong>' . __( 'Profession:', 'mp-directory' ) . '</strong> ' . esc_html( $profession ) . '</p>';
+			$content_parts[] = '<p><strong>' . __( 'Zawód:', 'mp-directory' ) . '</strong> ' . esc_html( $profession ) . '</p>';
 		}
 		if ( ! empty( $education ) ) {
-			$content_parts[] = '<p><strong>' . __( 'Education:', 'mp-directory' ) . '</strong> ' . esc_html( $education ) . '</p>';
+			$content_parts[] = '<p><strong>' . __( 'Wykształcenie:', 'mp-directory' ) . '</strong> ' . esc_html( $education ) . '</p>';
 		}
 
 		$post_content = implode( "\n", $content_parts );
 
-		// Build excerpt
 		$excerpt = sprintf(
-			/* translators: 1: party name, 2: constituency name */
-			__( 'Member of Parliament representing %2$s (%1$s)', 'mp-directory' ),
+			__( 'Poseł reprezentujący okręg %2$s (%1$s)', 'mp-directory' ),
 			$party,
 			$constituency
 		);
 
-		// Prepare ACF fields
 		$acf_fields = array(
 			'mp_first_name'        => $first_name,
 			'mp_last_name'         => $last_name,
@@ -392,27 +341,14 @@ class Importer {
 		);
 	}
 
-	/**
-	 * Set featured image from URL
-	 *
-	 * @param int    $post_id   Post ID.
-	 * @param string $image_url Image URL.
-	 * @param string $title     Image title.
-	 * @return int|false Attachment ID or false on failure.
-	 */
 	private function set_featured_image( $post_id, $image_url, $title = '' ) {
-		// Check if post already has thumbnail
 		if ( has_post_thumbnail( $post_id ) ) {
 			return get_post_thumbnail_id( $post_id );
 		}
 
-		// Download and attach image
 		return mp_directory_sideload_image( $image_url, $post_id, $title );
 	}
 
-	/**
-	 * Clear preview cache
-	 */
 	public function clear_preview_cache() {
 		delete_transient( self::PREVIEW_CACHE_KEY );
 	}

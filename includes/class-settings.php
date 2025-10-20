@@ -17,28 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Settings {
 
-	/**
-	 * Option name
-	 */
 	const OPTION_NAME = 'mp_directory_settings';
 
-	/**
-	 * Constructor
-	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'wp_ajax_mp_directory_test_api', array( $this, 'ajax_test_api' ) );
 	}
 
-	/**
-	 * Add admin menu pages
-	 */
 	public function add_admin_menu() {
-		// Main menu page (Settings)
 		add_menu_page(
-			__( 'MP Directory Settings', 'mp-directory' ),
-			__( 'MP Directory', 'mp-directory' ),
+			__( 'Ustawienia katalogu posłów', 'mp-directory' ),
+			__( 'Ustawienia importu posłów', 'mp-directory' ),
 			'manage_options',
 			'mp-directory',
 			array( $this, 'render_settings_page' ),
@@ -46,20 +36,18 @@ class Settings {
 			30
 		);
 
-		// Settings submenu
 		add_submenu_page(
 			'mp-directory',
-			__( 'Settings', 'mp-directory' ),
-			__( 'Settings', 'mp-directory' ),
+			__( 'Ustawienia', 'mp-directory' ),
+			__( 'Ustawienia', 'mp-directory' ),
 			'manage_options',
 			'mp-directory',
 			array( $this, 'render_settings_page' )
 		);
 
-		// Import submenu
 		add_submenu_page(
 			'mp-directory',
-			__( 'Import MPs', 'mp-directory' ),
+			__( 'Importuj posłów', 'mp-directory' ),
 			__( 'Import', 'mp-directory' ),
 			'manage_options',
 			'mp-directory-import',
@@ -80,27 +68,27 @@ class Settings {
 		// API Settings Section
 		add_settings_section(
 			'mp_directory_api_section',
-			__( 'API Configuration', 'mp-directory' ),
+			__( 'Konfiguracja API', 'mp-directory' ),
 			array( $this, 'render_api_section' ),
 			'mp-directory'
 		);
 
 		add_settings_field(
 			'api_base_url',
-			__( 'API Base URL', 'mp-directory' ),
+			__( 'Bazowy URL API', 'mp-directory' ),
 			array( $this, 'render_text_field' ),
 			'mp-directory',
 			'mp_directory_api_section',
 			array(
 				'label_for'   => 'api_base_url',
 				'placeholder' => 'https://api.example.com/mps',
-				'description' => __( 'The base URL for the MPs API endpoint.', 'mp-directory' ),
+				'description' => __( 'Bazowy URL punktu końcowego API dla posłów.', 'mp-directory' ),
 			)
 		);
 
 		add_settings_field(
 			'api_key',
-			__( 'API Key (Optional)', 'mp-directory' ),
+			__( 'Klucz API (opcjonalny)', 'mp-directory' ),
 			array( $this, 'render_text_field' ),
 			'mp-directory',
 			'mp_directory_api_section',
@@ -108,21 +96,20 @@ class Settings {
 				'label_for'   => 'api_key',
 				'type'        => 'password',
 				'placeholder' => '',
-				'description' => __( 'API key if required by the external API.', 'mp-directory' ),
+				'description' => __( 'Klucz API jeśli jest wymagany przez zewnętrzne API.', 'mp-directory' ),
 			)
 		);
 
-		// Import Settings Section
 		add_settings_section(
 			'mp_directory_import_section',
-			__( 'Import Settings', 'mp-directory' ),
+			__( 'Ustawienia importu', 'mp-directory' ),
 			array( $this, 'render_import_section' ),
 			'mp-directory'
 		);
 
 		add_settings_field(
 			'preview_cache_ttl',
-			__( 'Preview Cache TTL (minutes)', 'mp-directory' ),
+			__( 'TTL pamięci podręcznej podglądu (minuty)', 'mp-directory' ),
 			array( $this, 'render_number_field' ),
 			'mp-directory',
 			'mp_directory_import_section',
@@ -131,13 +118,13 @@ class Settings {
 				'min'         => 5,
 				'max'         => 120,
 				'default'     => 20,
-				'description' => __( 'How long to cache API preview data (5-120 minutes).', 'mp-directory' ),
+				'description' => __( 'Jak długo przechowywać dane podglądu API w pamięci podręcznej (5-120 minut).', 'mp-directory' ),
 			)
 		);
 
 		add_settings_field(
 			'import_batch_size',
-			__( 'Import Batch Size', 'mp-directory' ),
+			__( 'Rozmiar partii importu', 'mp-directory' ),
 			array( $this, 'render_number_field' ),
 			'mp-directory',
 			'mp_directory_import_section',
@@ -146,54 +133,47 @@ class Settings {
 				'min'         => 10,
 				'max'         => 500,
 				'default'     => 100,
-				'description' => __( 'Number of MPs to import per batch (10-500).', 'mp-directory' ),
+				'description' => __( 'Liczba posłów do zaimportowania na partię (10-500).', 'mp-directory' ),
 			)
 		);
 
-		// Cron Settings Section
 		add_settings_section(
 			'mp_directory_cron_section',
-			__( 'Scheduled Import', 'mp-directory' ),
+			__( 'Zaplanowany import', 'mp-directory' ),
 			array( $this, 'render_cron_section' ),
 			'mp-directory'
 		);
 
 		add_settings_field(
 			'enable_cron',
-			__( 'Enable Scheduled Import', 'mp-directory' ),
+			__( 'Włącz zaplanowany import', 'mp-directory' ),
 			array( $this, 'render_checkbox_field' ),
 			'mp-directory',
 			'mp_directory_cron_section',
 			array(
 				'label_for'   => 'enable_cron',
-				'description' => __( 'Automatically import MPs at scheduled intervals.', 'mp-directory' ),
+				'description' => __( 'Automatycznie importuj posłów w zaplanowanych odstępach czasu.', 'mp-directory' ),
 			)
 		);
 
 		add_settings_field(
 			'cron_interval',
-			__( 'Import Frequency', 'mp-directory' ),
+			__( 'Częstotliwość importu', 'mp-directory' ),
 			array( $this, 'render_select_field' ),
 			'mp-directory',
 			'mp_directory_cron_section',
 			array(
 				'label_for'   => 'cron_interval',
 				'options'     => array(
-					'hourly'       => __( 'Hourly', 'mp-directory' ),
-					'twicedaily'   => __( 'Twice Daily', 'mp-directory' ),
-					'daily'        => __( 'Daily', 'mp-directory' ),
+					'hourly'       => __( 'Co godzinę', 'mp-directory' ),
+					'twicedaily'   => __( 'Dwa razy dziennie', 'mp-directory' ),
+					'daily'        => __( 'Codziennie', 'mp-directory' ),
 				),
-				'description' => __( 'How often to run the automatic import.', 'mp-directory' ),
+				'description' => __( 'Jak często uruchamiać automatyczny import.', 'mp-directory' ),
 			)
 		);
 	}
 
-	/**
-	 * Sanitize settings
-	 *
-	 * @param array $input Raw input values.
-	 * @return array Sanitized values.
-	 */
 	public function sanitize_settings( $input ) {
 		$sanitized = array();
 
@@ -234,21 +214,21 @@ class Settings {
 	 * Render API section description
 	 */
 	public function render_api_section() {
-		echo '<p>' . esc_html__( 'Configure the external API endpoint for fetching MP data.', 'mp-directory' ) . '</p>';
+		echo '<p>' . esc_html__( 'Skonfiguruj zewnętrzny punkt końcowy API do pobierania danych posłów.', 'mp-directory' ) . '</p>';
 	}
 
 	/**
 	 * Render Import section description
 	 */
 	public function render_import_section() {
-		echo '<p>' . esc_html__( 'Control how data is imported and cached.', 'mp-directory' ) . '</p>';
+		echo '<p>' . esc_html__( 'Kontroluj sposób importowania i buforowania danych.', 'mp-directory' ) . '</p>';
 	}
 
 	/**
 	 * Render Cron section description
 	 */
 	public function render_cron_section() {
-		echo '<p>' . esc_html__( 'Set up automatic background imports.', 'mp-directory' ) . '</p>';
+		echo '<p>' . esc_html__( 'Skonfiguruj automatyczny import w tle.', 'mp-directory' ) . '</p>';
 	}
 
 	/**
@@ -381,10 +361,10 @@ class Settings {
 		check_ajax_referer( 'mp_directory_admin', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'mp-directory' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Niewystarczające uprawnienia.', 'mp-directory' ) ) );
 		}
 
-		$rest   = new REST();
+		$rest = new REST();
 		$result = $rest->test_connection();
 
 		if ( $result['success'] ) {

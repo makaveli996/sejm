@@ -124,8 +124,8 @@ class MP_Directory {
 		// Check if ACF is active
 		if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 			echo '<div class="notice notice-warning is-dismissible">';
-			echo '<p><strong>' . esc_html__( 'MP Directory:', 'mp-directory' ) . '</strong> ';
-			echo esc_html__( 'Advanced Custom Fields plugin is recommended for full functionality. Some features may be limited.', 'mp-directory' );
+			echo '<p><strong>' . esc_html__( 'Katalog Posłów:', 'mp-directory' ) . '</strong> ';
+			echo esc_html__( 'Wtyczka Advanced Custom Fields jest zalecana dla pełnej funkcjonalności. Niektóre funkcje mogą być ograniczone.', 'mp-directory' );
 			echo '</p></div>';
 		}
 	}

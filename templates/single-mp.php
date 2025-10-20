@@ -38,14 +38,14 @@ get_header();
 
 						<?php if ( $party ) : ?>
 							<p class="mp-party">
-								<strong><?php esc_html_e( 'Party:', 'mp-directory' ); ?></strong>
+								<strong><?php esc_html_e( 'Partia:', 'mp-directory' ); ?></strong>
 								<span class="mp-party-badge"><?php echo esc_html( $party ); ?></span>
 							</p>
 						<?php endif; ?>
 
 						<?php if ( $constituency ) : ?>
 							<p class="mp-constituency">
-								<strong><?php esc_html_e( 'Constituency:', 'mp-directory' ); ?></strong>
+								<strong><?php esc_html_e( 'Okręg wyborczy:', 'mp-directory' ); ?></strong>
 								<?php echo esc_html( $constituency ); ?>
 							</p>
 						<?php endif; ?>
@@ -54,22 +54,19 @@ get_header();
 			</header>
 
 			<div class="mp-content-wrapper">
-				<!-- Meta Information Table -->
 				<?php
 				get_template_part( 'mp-directory', 'meta-table' );
-				// Fallback to plugin template
 				if ( ! locate_template( 'mp-directory-meta-table.php' ) ) {
 					include MP_DIRECTORY_PATH . 'templates/parts/mp-meta-table.php';
 				}
 				?>
 
-				<!-- Biography / Content -->
 				<?php
 				$biography = MP_Directory\mp_directory_get_field( 'mp_biography', get_the_ID() );
 				if ( $biography || get_the_content() ) :
 					?>
 					<section class="mp-section mp-biography">
-						<h2><?php esc_html_e( 'Biography', 'mp-directory' ); ?></h2>
+						<h2><?php esc_html_e( 'Biografia', 'mp-directory' ); ?></h2>
 						<?php if ( $biography ) : ?>
 							<div class="mp-biography-content">
 								<?php echo wp_kses_post( $biography ); ?>
@@ -84,13 +81,12 @@ get_header();
 					</section>
 				<?php endif; ?>
 
-				<!-- Contact Information -->
 				<?php
 				$contacts = MP_Directory\mp_directory_get_field( 'mp_contacts', get_the_ID() );
 				if ( $contacts && is_array( $contacts ) ) :
 					?>
 					<section class="mp-section mp-contacts">
-						<h2><?php esc_html_e( 'Contact Information', 'mp-directory' ); ?></h2>
+						<h2><?php esc_html_e( 'Informacje kontaktowe', 'mp-directory' ); ?></h2>
 						<ul class="mp-contact-list">
 							<?php foreach ( $contacts as $contact ) : ?>
 								<?php if ( ! empty( $contact['value'] ) ) : ?>
@@ -104,13 +100,12 @@ get_header();
 					</section>
 				<?php endif; ?>
 
-				<!-- Social Media -->
 				<?php
 				$social = MP_Directory\mp_directory_get_field( 'mp_social', get_the_ID() );
 				if ( $social && is_array( $social ) ) :
 					?>
 					<section class="mp-section mp-social">
-						<h2><?php esc_html_e( 'Social Media', 'mp-directory' ); ?></h2>
+						<h2><?php esc_html_e( 'Media społecznościowe', 'mp-directory' ); ?></h2>
 						<ul class="mp-social-list">
 							<?php foreach ( $social as $link ) : ?>
 								<?php if ( ! empty( $link['url'] ) ) : ?>
@@ -130,10 +125,9 @@ get_header();
 					</section>
 				<?php endif; ?>
 
-				<!-- Back to Archive -->
 				<div class="mp-navigation">
 					<a href="<?php echo esc_url( get_post_type_archive_link( 'mp' ) ); ?>" class="mp-back-link">
-						&larr; <?php esc_html_e( 'Back to All MPs', 'mp-directory' ); ?>
+						&larr; <?php esc_html_e( 'Powrót do listy posłów', 'mp-directory' ); ?>
 					</a>
 				</div>
 			</div>

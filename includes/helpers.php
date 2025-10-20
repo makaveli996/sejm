@@ -12,14 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Sideload an image from URL and attach it to a post
- *
- * @param string $image_url Image URL.
- * @param int    $post_id   Post ID to attach to.
- * @param string $title     Image title/alt.
- * @return int|false Attachment ID or false on failure.
- */
 function mp_directory_sideload_image( $image_url, $post_id = 0, $title = '' ) {
 	// Validate URL
 	if ( empty( $image_url ) || ! filter_var( $image_url, FILTER_VALIDATE_URL ) ) {
@@ -77,14 +69,6 @@ function mp_directory_sideload_image( $image_url, $post_id = 0, $title = '' ) {
 	return $attachment_id;
 }
 
-/**
- * Get MP ACF field value with fallback
- *
- * @param string $field_name Field name.
- * @param int    $post_id    Post ID.
- * @param mixed  $default    Default value.
- * @return mixed
- */
 function mp_directory_get_field( $field_name, $post_id = null, $default = '' ) {
 	if ( ! function_exists( 'get_field' ) ) {
 		return $default;
@@ -95,11 +79,6 @@ function mp_directory_get_field( $field_name, $post_id = null, $default = '' ) {
 	return ! empty( $value ) ? $value : $default;
 }
 
-/**
- * Get all unique parties from MPs
- *
- * @return array
- */
 function mp_directory_get_parties() {
 	global $wpdb;
 
@@ -114,11 +93,6 @@ function mp_directory_get_parties() {
 	return array_filter( $parties );
 }
 
-/**
- * Get all unique constituencies from MPs
- *
- * @return array
- */
 function mp_directory_get_constituencies() {
 	global $wpdb;
 
@@ -133,11 +107,6 @@ function mp_directory_get_constituencies() {
 	return array_filter( $constituencies );
 }
 
-/**
- * Get all unique terms from MPs
- *
- * @return array
- */
 function mp_directory_get_terms() {
 	global $wpdb;
 
@@ -152,12 +121,6 @@ function mp_directory_get_terms() {
 	return array_filter( $terms );
 }
 
-/**
- * Format contact information
- *
- * @param array $contact Contact data with 'type', 'value', 'label'.
- * @return string HTML output.
- */
 function mp_directory_format_contact( $contact ) {
 	if ( empty( $contact['value'] ) ) {
 		return '';
@@ -185,12 +148,6 @@ function mp_directory_format_contact( $contact ) {
 	return $value;
 }
 
-/**
- * Get social media icon class
- *
- * @param string $network Social network name.
- * @return string Icon class or emoji.
- */
 function mp_directory_get_social_icon( $network ) {
 	$icons = array(
 		'twitter'   => '𝕏',
@@ -205,12 +162,6 @@ function mp_directory_get_social_icon( $network ) {
 	return isset( $icons[ $network ] ) ? $icons[ $network ] : $icons['other'];
 }
 
-/**
- * Sanitize API response
- *
- * @param mixed $data Raw data.
- * @return mixed Sanitized data.
- */
 function mp_directory_sanitize_api_response( $data ) {
 	if ( is_array( $data ) ) {
 		return array_map( 'MP_Directory\mp_directory_sanitize_api_response', $data );
@@ -223,11 +174,6 @@ function mp_directory_sanitize_api_response( $data ) {
 	return $data;
 }
 
-/**
- * Debug log helper
- *
- * @param mixed $message Message to log.
- */
 function mp_directory_log( $message ) {
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
 		if ( is_array( $message ) || is_object( $message ) ) {
