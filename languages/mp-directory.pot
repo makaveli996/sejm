@@ -1,0 +1,374 @@
+# Copyright (C) 2025 MP Directory
+# This file is distributed under the same license as the MP Directory plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: MP Directory 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mp-directory\n"
+"POT-Creation-Date: 2025-10-16 12:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+
+#: mp-directory.php
+msgid "MP Directory:"
+msgstr ""
+
+msgid "Advanced Custom Fields plugin is recommended for full functionality. Some features may be limited."
+msgstr ""
+
+#: includes/class-cpt.php
+msgid "Members of Parliament"
+msgstr ""
+
+msgid "MP"
+msgstr ""
+
+msgid "MP Directory"
+msgstr ""
+
+msgid "Add New"
+msgstr ""
+
+msgid "Add New MP"
+msgstr ""
+
+msgid "New MP"
+msgstr ""
+
+msgid "Edit MP"
+msgstr ""
+
+msgid "View MP"
+msgstr ""
+
+msgid "All MPs"
+msgstr ""
+
+msgid "Search MPs"
+msgstr ""
+
+msgid "No MPs found."
+msgstr ""
+
+msgid "No MPs found in Trash."
+msgstr ""
+
+#: includes/class-acf.php
+msgid "MP Details"
+msgstr ""
+
+msgid "Photo URL"
+msgstr ""
+
+msgid "First Name"
+msgstr ""
+
+msgid "Last Name"
+msgstr ""
+
+msgid "Full Name"
+msgstr ""
+
+msgid "Constituency"
+msgstr ""
+
+msgid "Party"
+msgstr ""
+
+msgid "Term"
+msgstr ""
+
+msgid "Birth Date"
+msgstr ""
+
+msgid "Education"
+msgstr ""
+
+msgid "Biography"
+msgstr ""
+
+msgid "Contact Information"
+msgstr ""
+
+msgid "Social Media"
+msgstr ""
+
+msgid "Extra Data (JSON)"
+msgstr ""
+
+#: includes/class-settings.php
+msgid "MP Directory Settings"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Import MPs"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "API Configuration"
+msgstr ""
+
+msgid "API Base URL"
+msgstr ""
+
+msgid "The base URL for the MPs API endpoint."
+msgstr ""
+
+msgid "API Key (Optional)"
+msgstr ""
+
+msgid "API key if required by the external API."
+msgstr ""
+
+msgid "Import Settings"
+msgstr ""
+
+msgid "Preview Cache TTL (minutes)"
+msgstr ""
+
+msgid "How long to cache API preview data (5-120 minutes)."
+msgstr ""
+
+msgid "Import Batch Size"
+msgstr ""
+
+msgid "Number of MPs to import per batch (10-500)."
+msgstr ""
+
+msgid "Scheduled Import"
+msgstr ""
+
+msgid "Enable Scheduled Import"
+msgstr ""
+
+msgid "Automatically import MPs at scheduled intervals."
+msgstr ""
+
+msgid "Import Frequency"
+msgstr ""
+
+msgid "How often to run the automatic import."
+msgstr ""
+
+msgid "Hourly"
+msgstr ""
+
+msgid "Twice Daily"
+msgstr ""
+
+msgid "Daily"
+msgstr ""
+
+msgid "Save Settings"
+msgstr ""
+
+msgid "Scheduled Import Status:"
+msgstr ""
+
+msgid "Next automatic import: %s"
+msgstr ""
+
+msgid "Quick Actions"
+msgstr ""
+
+msgid "View All MPs"
+msgstr ""
+
+msgid "View MP Archive (Frontend)"
+msgstr ""
+
+msgid "API Test"
+msgstr ""
+
+msgid "Test your API connection to ensure the settings are correct."
+msgstr ""
+
+msgid "Test Connection"
+msgstr ""
+
+msgid "Testing..."
+msgstr ""
+
+msgid "Connection failed"
+msgstr ""
+
+#: includes/class-rest.php
+msgid "API Base URL is not configured."
+msgstr ""
+
+msgid "API request failed with status code %d"
+msgstr ""
+
+msgid "Failed to parse JSON response: %s"
+msgstr ""
+
+msgid "API connection successful!"
+msgstr ""
+
+#: includes/class-importer.php
+msgid "Insufficient permissions."
+msgstr ""
+
+msgid "No MP data found in API response."
+msgstr ""
+
+msgid "No more MPs to import."
+msgstr ""
+
+msgid "Imported %1$d new MPs, updated %2$d existing MPs."
+msgstr ""
+
+msgid "MP data missing required \"id\" field."
+msgstr ""
+
+msgid "Profession:"
+msgstr ""
+
+msgid "Education:"
+msgstr ""
+
+msgid "Member of Parliament representing %2$s (%1$s)"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+#: includes/class-cron.php
+msgid "Not scheduled"
+msgstr ""
+
+msgid "In %s"
+msgstr ""
+
+#: includes/helpers.php
+msgid "Twitter/X"
+msgstr ""
+
+msgid "Facebook"
+msgstr ""
+
+msgid "Instagram"
+msgstr ""
+
+msgid "LinkedIn"
+msgstr ""
+
+msgid "YouTube"
+msgstr ""
+
+msgid "Website"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+#: admin/views/importer-preview.php
+msgid "Import Members of Parliament"
+msgstr ""
+
+msgid "This tool will fetch MP data from the configured API and import them into WordPress."
+msgstr ""
+
+msgid "Preview the data first to ensure your API connection is working correctly."
+msgstr ""
+
+msgid "Step 1: Preview Data"
+msgstr ""
+
+msgid "Load Preview"
+msgstr ""
+
+msgid "Refresh Preview"
+msgstr ""
+
+msgid "Preview loaded"
+msgstr ""
+
+msgid "Step 2: Run Import"
+msgstr ""
+
+msgid "Start Import"
+msgstr ""
+
+msgid "Are you sure you want to start the import? This may take several minutes."
+msgstr ""
+
+msgid "Importing..."
+msgstr ""
+
+msgid "Import completed successfully!"
+msgstr ""
+
+msgid "Import failed. Please try again."
+msgstr ""
+
+#: templates/archive-mp.php
+msgid "%d Member of Parliament"
+msgid_plural "%d Members of Parliament"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Search:"
+msgstr ""
+
+msgid "Search by name..."
+msgstr ""
+
+msgid "Party:"
+msgstr ""
+
+msgid "All Parties"
+msgstr ""
+
+msgid "Constituency:"
+msgstr ""
+
+msgid "All Constituencies"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "No Members of Parliament found."
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+#: templates/single-mp.php
+msgid "Details"
+msgstr ""
+
+msgid "Date of Birth"
+msgstr ""
+
+msgid "Phone"
+msgstr ""
+
+msgid "Fax"
+msgstr ""
+
+#: templates/parts/mp-card.php
+msgid "View Profile"
+msgstr ""
+
+#: templates/parts/mp-meta-table.php
+msgid "Date of Birth"
+msgstr ""
+
+msgid "Back to All MPs"
+msgstr ""

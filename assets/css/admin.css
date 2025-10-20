@@ -1,0 +1,12 @@
+/**
+ * MP Directory Admin Styles
+ */
+
+/* Admin specific styles can be added here */
+
+.mp-directory-settings-wrapper,
+.mp-directory-import-wrapper {
+  margin-top: 20px;
+}
+
+/* Import progress styling is inline in the view file */
