@@ -307,6 +307,21 @@ class Importer {
 		$education   = isset( $data['educationLevel'] ) ? sanitize_text_field( $data['educationLevel'] ) : '';
 		$profession  = isset( $data['profession'] ) ? sanitize_text_field( $data['profession'] ) : '';
 		$photo_url   = isset( $data['photo'] ) ? esc_url_raw( $data['photo'] ) : '';
+		
+		// Build Sejm API photo URLs based on ID
+		$api_id = isset( $data['id'] ) ? absint( $data['id'] ) : 0;
+		$api_base_url = Settings::get( 'api_base_url', '' );
+		$sejm_photo_url = '';
+		$sejm_photo_mini_url = '';
+		
+		if ( ! empty( $api_id ) && ! empty( $api_base_url ) ) {
+			// Extract term from base URL (e.g., "term10" from "https://api.sejm.gov.pl/sejm/term10/MP")
+			if ( preg_match( '/term(\d+)/i', $api_base_url, $matches ) ) {
+				$term = $matches[1];
+				$sejm_photo_url = "https://api.sejm.gov.pl/sejm/term{$term}/MP/{$api_id}/photo";
+				$sejm_photo_mini_url = "https://api.sejm.gov.pl/sejm/term{$term}/MP/{$api_id}/photo-mini";
+			}
+		}
 
 		// Build post content
 		$content_parts = array();
@@ -329,14 +344,16 @@ class Importer {
 
 		// Prepare ACF fields
 		$acf_fields = array(
-			'mp_first_name'   => $first_name,
-			'mp_last_name'    => $last_name,
-			'mp_full_name'    => $full_name,
-			'mp_party'        => $party,
-			'mp_constituency' => $constituency,
-			'mp_birthdate'    => $birthdate,
-			'mp_education'    => $education,
-			'mp_photo_url'    => $photo_url,
+			'mp_first_name'        => $first_name,
+			'mp_last_name'         => $last_name,
+			'mp_full_name'         => $full_name,
+			'mp_party'             => $party,
+			'mp_constituency'      => $constituency,
+			'mp_birthdate'         => $birthdate,
+			'mp_education'         => $education,
+			'mp_photo_url'         => $photo_url,
+			'mp_sejm_photo_url'    => $sejm_photo_url,
+			'mp_sejm_photo_mini'   => $sejm_photo_mini_url,
 		);
 
 		// Add contacts

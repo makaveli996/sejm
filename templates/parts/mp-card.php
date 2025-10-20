@@ -5,15 +5,20 @@
  * @package MP_Directory
  */
 
-$mp_id        = get_the_ID();
-$party        = MP_Directory\mp_directory_get_field( 'mp_party', $mp_id );
-$constituency = MP_Directory\mp_directory_get_field( 'mp_constituency', $mp_id );
-$birthdate    = MP_Directory\mp_directory_get_field( 'mp_birthdate', $mp_id );
+$mp_id              = get_the_ID();
+$party              = MP_Directory\mp_directory_get_field( 'mp_party', $mp_id );
+$constituency       = MP_Directory\mp_directory_get_field( 'mp_constituency', $mp_id );
+$birthdate          = MP_Directory\mp_directory_get_field( 'mp_birthdate', $mp_id );
+$sejm_photo_full    = MP_Directory\mp_directory_get_field( 'mp_sejm_photo_url', $mp_id );
 ?>
 
 <div class="mp-card">
 	<a href="<?php the_permalink(); ?>" class="mp-card-link">
-		<?php if ( has_post_thumbnail() ) : ?>
+		<?php if ( ! empty( $sejm_photo_full ) ) : ?>
+			<div class="mp-card-photo">
+				<img src="<?php echo esc_url( $sejm_photo_full ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" />
+			</div>
+		<?php elseif ( has_post_thumbnail() ) : ?>
 			<div class="mp-card-photo">
 				<?php the_post_thumbnail( 'medium', array( 'alt' => get_the_title() ) ); ?>
 			</div>

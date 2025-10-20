@@ -53,6 +53,36 @@ class ACF {
 							'id'    => '',
 						),
 					),
+					// Sejm Photo URL (full size)
+					array(
+						'key'               => 'field_mp_sejm_photo_url',
+						'label'             => __( 'Sejm Photo URL (Full)', 'mp-directory' ),
+						'name'              => 'mp_sejm_photo_url',
+						'type'              => 'url',
+						'instructions'      => __( 'Full-size photo from Sejm API', 'mp-directory' ),
+						'required'          => 0,
+						'conditional_logic' => 0,
+						'wrapper'           => array(
+							'width' => '50',
+							'class' => '',
+							'id'    => '',
+						),
+					),
+					// Sejm Photo Mini URL
+					array(
+						'key'               => 'field_mp_sejm_photo_mini',
+						'label'             => __( 'Sejm Photo URL (Mini)', 'mp-directory' ),
+						'name'              => 'mp_sejm_photo_mini',
+						'type'              => 'url',
+						'instructions'      => __( 'Smaller photo from Sejm API (optimized for archive)', 'mp-directory' ),
+						'required'          => 0,
+						'conditional_logic' => 0,
+						'wrapper'           => array(
+							'width' => '50',
+							'class' => '',
+							'id'    => '',
+						),
+					),
 					// First Name
 					array(
 						'key'               => 'field_mp_first_name',

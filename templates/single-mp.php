@@ -14,7 +14,15 @@ get_header();
 			<!-- Hero Section -->
 			<header class="mp-hero">
 				<div class="mp-hero-content">
-					<?php if ( has_post_thumbnail() ) : ?>
+					<?php
+					$sejm_photo_full = MP_Directory\mp_directory_get_field( 'mp_sejm_photo_url', get_the_ID() );
+					?>
+					
+					<?php if ( ! empty( $sejm_photo_full ) ) : ?>
+						<div class="mp-hero-photo">
+							<img src="<?php echo esc_url( $sejm_photo_full ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" />
+						</div>
+					<?php elseif ( has_post_thumbnail() ) : ?>
 						<div class="mp-hero-photo">
 							<?php the_post_thumbnail( 'medium', array( 'alt' => get_the_title() ) ); ?>
 						</div>
